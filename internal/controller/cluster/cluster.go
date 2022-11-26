@@ -45,7 +45,6 @@ const (
 	errTrackPCUsage = "cannot track ProviderConfig usage"
 	errGetPC        = "cannot get ProviderConfig"
 	errGetCreds     = "cannot get credentials"
-	errNewClient    = "cannot create new Service"
 )
 
 // A NoOpService does nothing.
@@ -142,7 +141,7 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 			cr.Status.AtProvider.ID = cluster.ID
 			if cluster.State == "active" {
 				cr.Status.SetConditions(xpv1.Available())
-				err := util.GenerateKubeconfig(c.rancherHost, cluster.ID, c.token, cr.Name, cr.Namespace, c.httpClient, c.kube)
+				err := util.GenerateKubeconfig(ctx, c.rancherHost, cluster.ID, c.token, cr.Name, cr.Namespace, c.httpClient, c.kube)
 				if err != nil {
 					return managed.ExternalObservation{}, err
 				}

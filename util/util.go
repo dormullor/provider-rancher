@@ -35,8 +35,7 @@ func CreateKubeconfigSecret(ctx context.Context, kubeconfig []byte, clusterName 
 	}
 }
 
-func GenerateKubeconfig(host, clusterID, token, crName, crNamespace string, httpClient http.Client, client client.Client) error {
-	ctx := context.Background()
+func GenerateKubeconfig(ctx context.Context, host, clusterID, token, crName, crNamespace string, httpClient http.Client, client client.Client) error {
 	url := fmt.Sprintf("%s/v3/clusters/%s?action=generateKubeconfig", host, clusterID)
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
