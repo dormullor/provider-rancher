@@ -16,7 +16,6 @@ limitations under the License.
 
 package cluster
 
-import (
 // "context"
 // "testing"
 
@@ -25,7 +24,6 @@ import (
 // "github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
 // "github.com/crossplane/crossplane-runtime/pkg/resource"
 // "github.com/crossplane/crossplane-runtime/pkg/test"
-)
 
 // Unlike many Kubernetes projects Crossplane does not use third party testing
 // libraries, per the common Go test review comments. Crossplane encourages the

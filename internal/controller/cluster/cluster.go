@@ -110,7 +110,7 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 		return nil, errors.Wrap(err, errGetCreds)
 	}
 	rancherHost := pc.Spec.RancherHost
-	token := "Basic " + b64.StdEncoding.EncodeToString([]byte(tokenDecoded))
+	token := "Basic " + b64.StdEncoding.EncodeToString(tokenDecoded)
 	client := &http.Client{}
 	return &external{httpClient: *client, token: token, kube: c.kube, rancherHost: rancherHost}, nil
 }
@@ -130,7 +130,7 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 		return managed.ExternalObservation{}, errors.New(errNotCluster)
 	}
 
-	results, err := util.GetClusters(c.rancherHost, c.token, c.httpClient)
+	results, err := util.GetClusters(c.rancherHost, c.token, c.httpClient, ctx)
 	if err != nil {
 		return managed.ExternalObservation{}, err
 	}
@@ -163,12 +163,12 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	if !ok {
 		return managed.ExternalCreation{}, errors.New(errNotCluster)
 	}
-	clusterId, err := util.CreateCluster(c.rancherHost, c.token, c.httpClient, cr)
+	clusterId, err := util.CreateCluster(c.rancherHost, c.token, c.httpClient, cr, ctx)
 	if err != nil {
 		return managed.ExternalCreation{}, err
 	}
 	for _, node := range cr.Spec.ForProvider.NodePools {
-		err := util.CreateNodePool(c.rancherHost, c.token, c.httpClient, &node, clusterId)
+		err := util.CreateNodePool(c.rancherHost, c.token, clusterId, c.httpClient, node, ctx)
 		if err != nil {
 			return managed.ExternalCreation{}, err
 		}
@@ -196,7 +196,7 @@ func (c *external) Delete(ctx context.Context, mg resource.Managed) error {
 	if !ok {
 		return errors.New(errNotCluster)
 	}
-	err := util.DeleteCluster(c.rancherHost, c.token, cr.Status.AtProvider.ID, c.httpClient)
+	err := util.DeleteCluster(c.rancherHost, c.token, cr.Status.AtProvider.ID, c.httpClient, ctx)
 	if err != nil {
 		return err
 	}

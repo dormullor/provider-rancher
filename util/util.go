@@ -5,7 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log"
 	"net/http"
 
 	"github.com/crossplane/provider-rancher/apis/rancher/v1alpha1"
@@ -47,13 +48,9 @@ func GenerateKubeconfig(ctx context.Context, host, clusterID, token, crName, crN
 	if err != nil {
 		return err
 	}
-	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
-			fmt.Errorf("failed to close response body: %s", err)
-		}
-	}()
-	body, err := ioutil.ReadAll(resp.Body)
+	defer dclose(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -71,9 +68,9 @@ func GenerateKubeconfig(ctx context.Context, host, clusterID, token, crName, crN
 	return nil
 }
 
-func GetClusters(host, token string, httpClient http.Client) (v1alpha1.ClusterResponse, error) {
+func GetClusters(host, token string, httpClient http.Client, ctx context.Context) (v1alpha1.ClusterResponse, error) {
 	url := fmt.Sprintf("%s/v3/clusters", host)
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return v1alpha1.ClusterResponse{}, err
 	}
@@ -84,14 +81,9 @@ func GetClusters(host, token string, httpClient http.Client) (v1alpha1.ClusterRe
 	if err != nil {
 		return v1alpha1.ClusterResponse{}, err
 	}
-	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
-			fmt.Errorf("failed to close response body: %s", err)
-		}
-	}()
+	defer dclose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return v1alpha1.ClusterResponse{}, err
 	}
@@ -107,13 +99,13 @@ func GetClusters(host, token string, httpClient http.Client) (v1alpha1.ClusterRe
 	return *result, nil
 }
 
-func CreateCluster(host, token string, httpClient http.Client, cluster *v1alpha1.Cluster) (string, error) {
+func CreateCluster(host, token string, httpClient http.Client, cluster *v1alpha1.Cluster, ctx context.Context) (string, error) {
 	url := fmt.Sprintf("%s/v3/clusters", host)
 	clusterJson, err := json.Marshal(cluster.Spec.ForProvider.RKE)
 	if err != nil {
 		return "", err
 	}
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(clusterJson))
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(clusterJson))
 	if err != nil {
 		return "", err
 	}
@@ -124,14 +116,9 @@ func CreateCluster(host, token string, httpClient http.Client, cluster *v1alpha1
 	if err != nil {
 		return "", err
 	}
-	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
-			fmt.Errorf("failed to close response body: %s", err)
-		}
-	}()
+	defer dclose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -147,14 +134,14 @@ func CreateCluster(host, token string, httpClient http.Client, cluster *v1alpha1
 	return result.ID, nil
 }
 
-func CreateNodePool(host, token string, httpClient http.Client, nodePool *v1alpha1.RKENodePool, clusterId string) error {
+func CreateNodePool(host, token, clusterId string, httpClient http.Client, nodePool v1alpha1.RKENodePool, ctx context.Context) error {
 	nodePool.ClusterID = clusterId
 	url := fmt.Sprintf("%s/v3/nodepool", host)
 	nodePoolJson, err := json.Marshal(nodePool)
 	if err != nil {
 		return err
 	}
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(nodePoolJson))
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(nodePoolJson))
 	if err != nil {
 		return err
 	}
@@ -165,14 +152,9 @@ func CreateNodePool(host, token string, httpClient http.Client, nodePool *v1alph
 	if err != nil {
 		return err
 	}
-	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
-			fmt.Errorf("failed to close response body: %s", err)
-		}
-	}()
+	defer dclose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -183,9 +165,9 @@ func CreateNodePool(host, token string, httpClient http.Client, nodePool *v1alph
 	return nil
 }
 
-func DeleteCluster(host, token, clusterID string, httpClient http.Client) error {
+func DeleteCluster(host, token, clusterID string, httpClient http.Client, ctx context.Context) error {
 	url := fmt.Sprintf("%s/v3/clusters/%s", host, clusterID)
-	req, err := http.NewRequest("DELETE", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "DELETE", url, nil)
 	if err != nil {
 		return err
 	}
@@ -196,14 +178,9 @@ func DeleteCluster(host, token, clusterID string, httpClient http.Client) error 
 	if err != nil {
 		return err
 	}
-	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
-			fmt.Errorf("failed to close response body: %s", err)
-		}
-	}()
+	defer dclose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -212,4 +189,10 @@ func DeleteCluster(host, token, clusterID string, httpClient http.Client) error 
 		return fmt.Errorf("failed to delete cluster: %s", string(body))
 	}
 	return nil
+}
+
+func dclose(c io.Closer) {
+	if err := c.Close(); err != nil {
+		log.Fatal(err)
+	}
 }

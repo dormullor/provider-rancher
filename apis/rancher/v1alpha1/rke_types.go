@@ -1102,7 +1102,7 @@ type NodeDrainInput struct {
 	IgnoreDaemonSets *bool `yaml:"ignore_daemonsets" json:"ignoreDaemonSets,omitempty" norman:"default=true"`
 	// Continue even if there are pods using emptyDir
 	DeleteLocalData bool `yaml:"delete_local_data" json:"deleteLocalData,omitempty"`
-	//Period of time in seconds given to each pod to terminate gracefully.
+	// Period of time in seconds given to each pod to terminate gracefully.
 	// If negative, the default value specified in the pod will be used
 	GracePeriod int `yaml:"grace_period" json:"gracePeriod,omitempty" norman:"default=-1"`
 	// Time to wait (in seconds) before giving up for one try
