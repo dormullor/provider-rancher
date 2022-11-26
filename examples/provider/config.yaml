@@ -1,20 +1,21 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  namespace: crossplane-system
+  namespace: default
   name: example-provider-secret
 type: Opaque
 data:
-  # credentials: BASE64ENCODED_PROVIDER_CREDS
+  credentials: <RANCHER_API_BASE64_ENCODED_TOKEN>
 ---
-apiVersion: template.crossplane.io/v1alpha1
+apiVersion: rancher.crossplane.io/v1alpha1
 kind: ProviderConfig
 metadata:
   name: example
 spec:
+  rancherHost: https://rancher.example.com
   credentials:
     source: Secret
     secretRef:
-      namespace: crossplane-system
+      namespace: default
       name: example-provider-secret
       key: credentials

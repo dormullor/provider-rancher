@@ -1,0 +1,107 @@
+apiVersion: rancher.rancher.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  name: test-new
+spec:
+  forProvider:
+    rke:
+      dockerRootDir: /var/lib/docker
+      enableNetworkPolicy: false
+      enableClusterAlerting: false
+      enableClusterMonitoring: false
+      labels:
+        foo: bar
+      localClusterAuthEndpoint:
+        enabled: true
+      name: test-new
+      rancherKubernetesEngineConfig:
+        upgradeStrategy:
+          drain: true
+          maxUnavailableControlplane: "1"
+          maxUnavailableWorker: "1"
+          nodeDrainInput:
+            deleteLocalData: true
+            force: true
+            gracePeriod: 120
+            ignoreDaemonSets: true
+            timeout: 120
+        addonJobTimeout: 45
+        enableCriDockerd: false
+        ignoreDockerVersion: true
+        rotateEncryptionKey: false
+        sshAgentAuth: false
+        kubernetesVersion: v1.24.6-rancher1-1
+        authentication:
+          strategy: x509
+        dns:
+          nodelocal:
+            ipAddress: ""
+            nodeSelector: {}
+            updateStrategy: {}
+        network:
+          mtu: 0
+          options:
+            flannel_backend_type: vxlan
+          plugin: canal
+        ingress: 
+          provider: none ## nginx or none
+          defaultBackend: false
+          defaultIngressClass: false
+          httpPort: 0
+          httpsPort: 0
+        monitoring:
+          provider: none ## metrics-server or none
+          replicas: 1
+        services:
+          kubeApi:
+            alwaysPullImages: false
+            podSecurityPolicy: false
+            secretsEncryptionConfig:
+              enabled: false
+            serviceNodePortRange: "30000-32767"
+          etcd:
+            creation: 12h
+            extraArgs:
+              election-timeout: "5000"
+              heartbeat-interval: "500"
+            gid: 0
+            retention: 72h
+            snapshot: false
+            uid: 0
+            backupConfig:
+              enabled: true
+              intervalHours: 12
+              retention: 6
+              safeTimestamp: false
+              timeout: 300
+    nodePools:
+      - annotations: {}
+        baseType: nodePool
+        controlPlane: false
+        deleteNotReadyAfterSecs: 0
+        drainBeforeDelete: false
+        driver: amazonec2
+        etcd: false
+        hostnamePrefix: test-new-worker
+        labels:
+          foo: bar
+        name: test-new-worker
+        nodeTemplateId: cattle-global-nt:nt-pcfbg
+        quantity: 2
+        worker: true
+      - annotations: {}
+        baseType: nodePool
+        controlPlane: true
+        deleteNotReadyAfterSecs: 0
+        drainBeforeDelete: false
+        driver: amazonec2
+        etcd: true
+        hostnamePrefix: test-new-master
+        labels:
+          foo: bar
+        name: test-new-master
+        nodeTemplateId: cattle-global-nt:nt-pcfbg
+        quantity: 1
+        worker: true
+  providerConfigRef:
+    name: example
