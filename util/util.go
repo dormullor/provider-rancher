@@ -47,7 +47,12 @@ func GenerateKubeconfig(ctx context.Context, host, clusterID, token, crName, crN
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			fmt.Errorf("failed to close response body: %s", err)
+		}
+	}()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
@@ -79,7 +84,12 @@ func GetClusters(host, token string, httpClient http.Client) (v1alpha1.ClusterRe
 	if err != nil {
 		return v1alpha1.ClusterResponse{}, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			fmt.Errorf("failed to close response body: %s", err)
+		}
+	}()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -114,7 +124,12 @@ func CreateCluster(host, token string, httpClient http.Client, cluster *v1alpha1
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			fmt.Errorf("failed to close response body: %s", err)
+		}
+	}()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -150,7 +165,12 @@ func CreateNodePool(host, token string, httpClient http.Client, nodePool *v1alph
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			fmt.Errorf("failed to close response body: %s", err)
+		}
+	}()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -176,7 +196,12 @@ func DeleteCluster(host, token, clusterID string, httpClient http.Client) error 
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			fmt.Errorf("failed to close response body: %s", err)
+		}
+	}()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
