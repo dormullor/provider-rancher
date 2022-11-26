@@ -64,6 +64,8 @@ spec:
               forProvider:
                 description: ClusterParameters are the configurable fields of a Cluster.
                 properties:
+                  kubeconfigSecretNamespace:
+                    type: string
                   nodePools:
                     items:
                       description: RKENodePoolSpec defines the desired state of RKENodePool

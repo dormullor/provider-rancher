@@ -1,9 +1,10 @@
 apiVersion: rancher.rancher.crossplane.io/v1alpha1
 kind: Cluster
 metadata:
-  name: test-new
+  name: example
 spec:
   forProvider:
+    kubeconfigSecretNamespace: default
     rke:
       dockerRootDir: /var/lib/docker
       enableNetworkPolicy: false
@@ -13,7 +14,7 @@ spec:
         foo: bar
       localClusterAuthEndpoint:
         enabled: true
-      name: test-new
+      name: example
       rancherKubernetesEngineConfig:
         upgradeStrategy:
           drain: true
@@ -82,10 +83,10 @@ spec:
         drainBeforeDelete: false
         driver: amazonec2
         etcd: false
-        hostnamePrefix: test-new-worker
+        hostnamePrefix: example-worker
         labels:
           foo: bar
-        name: test-new-worker
+        name: example-worker
         nodeTemplateId: cattle-global-nt:nt-pcfbg
         quantity: 2
         worker: true
@@ -96,10 +97,10 @@ spec:
         drainBeforeDelete: false
         driver: amazonec2
         etcd: true
-        hostnamePrefix: test-new-master
+        hostnamePrefix: example-master
         labels:
           foo: bar
-        name: test-new-master
+        name: example-master
         nodeTemplateId: cattle-global-nt:nt-pcfbg
         quantity: 1
         worker: true

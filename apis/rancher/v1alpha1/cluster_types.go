@@ -62,8 +62,9 @@ type RKEClusterConfigSpec struct {
 
 // ClusterParameters are the configurable fields of a Cluster.
 type ClusterParameters struct {
-	RKE       RKEClusterConfigSpec `json:"rke,omitempty"`
-	NodePools []RKENodePool        `json:"nodePools,omitempty"`
+	KubeconfigSecretNamespace string               `json:"kubeconfigSecretNamespace,omitempty"`
+	RKE                       RKEClusterConfigSpec `json:"rke,omitempty"`
+	NodePools                 []RKENodePool        `json:"nodePools,omitempty"`
 }
 
 // ClusterObservation are the observable fields of a Cluster.
