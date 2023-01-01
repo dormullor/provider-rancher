@@ -36,10 +36,10 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/ratelimiter"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 
-	"github.com/crossplane/provider-rancher/apis"
-	"github.com/crossplane/provider-rancher/apis/v1alpha1"
-	rancher "github.com/crossplane/provider-rancher/internal/controller"
-	"github.com/crossplane/provider-rancher/internal/controller/features"
+	"github.com/dormullor/provider-rancher/apis"
+	"github.com/dormullor/provider-rancher/apis/v1alpha1"
+	rancher "github.com/dormullor/provider-rancher/internal/controller"
+	"github.com/dormullor/provider-rancher/internal/controller/features"
 )
 
 func main() {

@@ -34,10 +34,10 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/ratelimiter"
 	"github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
-	"github.com/crossplane/provider-rancher/apis/rancher/v1alpha1"
-	apisv1alpha1 "github.com/crossplane/provider-rancher/apis/v1alpha1"
-	"github.com/crossplane/provider-rancher/internal/controller/features"
-	"github.com/crossplane/provider-rancher/util"
+	"github.com/dormullor/provider-rancher/apis/rancher/v1alpha1"
+	apisv1alpha1 "github.com/dormullor/provider-rancher/apis/v1alpha1"
+	"github.com/dormullor/provider-rancher/internal/controller/features"
+	"github.com/dormullor/provider-rancher/util"
 )
 
 const (

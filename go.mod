@@ -1,4 +1,4 @@
-module github.com/crossplane/provider-rancher
+module github.com/dormullor/provider-rancher
 
 go 1.19
 

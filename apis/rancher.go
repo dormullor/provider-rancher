@@ -20,8 +20,8 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
-	rancherclusterv1alpha1 "github.com/crossplane/provider-rancher/apis/rancher/v1alpha1"
-	rancherv1alpha1 "github.com/crossplane/provider-rancher/apis/v1alpha1"
+	rancherclusterv1alpha1 "github.com/dormullor/provider-rancher/apis/rancher/v1alpha1"
+	rancherv1alpha1 "github.com/dormullor/provider-rancher/apis/v1alpha1"
 )
 
 func init() {
