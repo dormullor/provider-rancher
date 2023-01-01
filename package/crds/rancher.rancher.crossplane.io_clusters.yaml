@@ -106,6 +106,8 @@ spec:
                           type: boolean
                       type: object
                     type: array
+                  region:
+                    type: string
                   rke:
                     description: RKEClusterConfigSpec defines the desired state of
                       RKEClusterConfig

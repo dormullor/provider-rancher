@@ -63,6 +63,7 @@ type RKEClusterConfigSpec struct {
 // ClusterParameters are the configurable fields of a Cluster.
 type ClusterParameters struct {
 	KubeconfigSecretNamespace string               `json:"kubeconfigSecretNamespace,omitempty"`
+	Region                    string               `json:"region,omitempty"`
 	RKE                       RKEClusterConfigSpec `json:"rke,omitempty"`
 	NodePools                 []RKENodePool        `json:"nodePools,omitempty"`
 }

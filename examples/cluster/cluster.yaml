@@ -5,6 +5,7 @@ metadata:
 spec:
   forProvider:
     kubeconfigSecretNamespace: default
+    region: us-east-1
     rke:
       dockerRootDir: /var/lib/docker
       enableNetworkPolicy: false
