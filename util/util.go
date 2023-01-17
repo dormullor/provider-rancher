@@ -15,11 +15,11 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func CreateKubeconfigSecret(ctx context.Context, kubeconfig []byte, clusterName string, namespace string, kubeClient client.Client) error {
+func GenerateKubeconfigSecret(kubeconfig []byte, clusterName string, namespace string) corev1.Secret {
 	if namespace == "" {
 		namespace = "default"
 	}
-	secret := &corev1.Secret{
+	return corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      fmt.Sprintf("%s-kubeconfig", clusterName),
 			Namespace: namespace,
@@ -28,42 +28,56 @@ func CreateKubeconfigSecret(ctx context.Context, kubeconfig []byte, clusterName 
 			"kubeconfig": kubeconfig,
 		},
 	}
-	err := kubeClient.Get(ctx, client.ObjectKey{Name: secret.Name, Namespace: secret.Namespace}, &corev1.Secret{})
-	if err != nil {
-		return kubeClient.Create(ctx, secret)
-	} else {
-		return kubeClient.Update(ctx, secret)
+}
+
+func CreateKubeconfigSecret(ctx context.Context, kubeconfig []byte, clusterName string, namespace string, kubeClient client.Client) error {
+	secret := GenerateKubeconfigSecret(kubeconfig, clusterName, namespace)
+	exist := KubeconfigSecretExist(ctx, clusterName, namespace, kubeClient)
+	if !exist {
+		return kubeClient.Create(ctx, &secret)
 	}
+	return kubeClient.Update(ctx, &secret)
+}
+
+func KubeconfigSecretExist(ctx context.Context, clusterName string, namespace string, kubeClient client.Client) bool {
+	err := kubeClient.Get(ctx, client.ObjectKey{Name: fmt.Sprintf("%s-kubeconfig", clusterName), Namespace: namespace}, &corev1.Secret{})
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func GenerateKubeconfig(ctx context.Context, host, clusterID, token, crName, crNamespace string, httpClient http.Client, client client.Client) error {
-	url := fmt.Sprintf("%s/v3/clusters/%s?action=generateKubeconfig", host, clusterID)
-	req, err := http.NewRequest("POST", url, nil)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Authorization", token)
-	req.Header.Add("Accept", "application/json")
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer dclose(resp.Body)
+	exist := KubeconfigSecretExist(ctx, crName, crNamespace, client)
+	if !exist {
+		url := fmt.Sprintf("%s/v3/clusters/%s?action=generateKubeconfig", host, clusterID)
+		req, err := http.NewRequest("POST", url, nil)
+		if err != nil {
+			return err
+		}
+		req.Header.Add("Authorization", token)
+		req.Header.Add("Accept", "application/json")
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			return err
+		}
+		defer dclose(resp.Body)
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	var result *v1alpha1.KubeconfigResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		fmt.Println("Can not unmarshal JSON")
-	}
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("failed to generate kubeconfig: %s", string(body))
-	}
-	err = CreateKubeconfigSecret(ctx, []byte(result.Config), crName, crNamespace, client)
-	if err != nil {
-		return err
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		var result *v1alpha1.KubeconfigResponse
+		if err := json.Unmarshal(body, &result); err != nil {
+			fmt.Println("Can not unmarshal JSON")
+		}
+		if resp.StatusCode != 200 {
+			return fmt.Errorf("failed to generate kubeconfig: %s", string(body))
+		}
+		err = CreateKubeconfigSecret(ctx, []byte(result.Config), crName, crNamespace, client)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
