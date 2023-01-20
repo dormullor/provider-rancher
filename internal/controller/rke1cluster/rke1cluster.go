@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package cluster
+package rke1cluster
 
 import (
 	"context"
@@ -158,6 +158,7 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	if err != nil {
 		return managed.ExternalCreation{}, err
 	}
+	
 	for _, node := range cr.Spec.ForProvider.NodePools {
 		err := util.CreateNodePool(c.rancherHost, c.token, clusterId, c.httpClient, node, ctx)
 		if err != nil {

@@ -27,12 +27,56 @@ import (
 
 // RKE1NodeTemplateParameters are the configurable fields of a RKE1NodeTemplate.
 type RKE1NodeTemplateParameters struct {
-	ConfigurableField string `json:"configurableField"`
+	Name                 string          `json:"name,omitempty"`
+	CloudCredentialId    string          `json:"cloudCredentialId,omitempty"`
+	DisplayName          string          `json:"displayName,omitempty"`
+	Driver               string          `json:"driver,omitempty"`
+	EngineInstallURL     string          `json:"engineInstallURL,omitempty"`
+	UseInternalIPAddress bool            `json:"useInternalIPAddress,omitempty"`
+	Amazonec2Config      Amazonec2Config `json:"amazonec2Config,omitempty"`
+}
+
+// Amazonec2Config contains the parameters for the amazonec2 driver.
+type Amazonec2Config struct {
+	AMI                     string `json:"ami,omitempty"`
+	BlockDurationMinutes    int    `json:"blockDurationMinutes,omitempty"`
+	DeviceName              string `json:"deviceName,omitempty"`
+	EncryptEBSVolume        bool   `json:"encryptEbsVolume,omitempty"`
+	Endpoint                string `json:"endpoint,omitempty"`
+	HttpEndpoint            string `json:"httpEndpoint,omitempty"`
+	HTTPTokens              string `json:"httpTokens,omitempty"`
+	IAMInstanceProfile      string `json:"iamInstanceProfile,omitempty"`
+	InsecureTransport       bool   `json:"insecureTransport,omitempty"`
+	InstanceType            string `json:"instanceType,omitempty"`
+	KeypairName             string `json:"keypairName,omitempty"`
+	KMSKey                  string `json:"kmsKey,omitempty"`
+	Monitoring              bool   `json:"monitoring,omitempty"`
+	PrivateAddressOnly      bool   `json:"privateAddressOnly,omitempty"`
+	Region                  string `json:"region,omitempty"`
+	RequestSpotInstance     bool   `json:"requestSpotInstance,omitempty"`
+	Retries                 int    `json:"retries,omitempty"`
+	RootSize                int    `json:"rootSize,omitempty"`
+	SecurityGroup           string `json:"securityGroup,omitempty"`
+	SecurityGroupReadonly   bool   `json:"securityGroupReadonly,omitempty"`
+	SessionToken            string `json:"sessionToken,omitempty"`
+	SpotPrice               string `json:"spotPrice,omitempty"`
+	SSHKeyContents          string `json:"sshKeyContents,omitempty"`
+	SSHUser                 string `json:"sshUser,omitempty"`
+	SubnetID                string `json:"subnetId,omitempty"`
+	SubnetIDRef             string `json:"subnetIdRef,omitempty"`
+	Tags                    string `json:"tags,omitempty"`
+	UseEBSOptimizedInstance bool   `json:"useEbsOptimizedInstance,omitempty"`
+	UsePrivateAddress       bool   `json:"usePrivateAddress,omitempty"`
+	UserData                string `json:"userdata,omitempty"`
+	VolumeType              string `json:"volumeType,omitempty"`
+	VpcID                   string `json:"vpcId,omitempty"`
+	VpcIDRef                string `json:"vpcIdRef,omitempty"`
+	Zone                    string `json:"zone,omitempty"`
 }
 
 // RKE1NodeTemplateObservation are the observable fields of a RKE1NodeTemplate.
 type RKE1NodeTemplateObservation struct {
-	ObservableField string `json:"observableField,omitempty"`
+	ID string `json:"id,omitempty"`
 }
 
 // A RKE1NodeTemplateSpec defines the desired state of a RKE1NodeTemplate.

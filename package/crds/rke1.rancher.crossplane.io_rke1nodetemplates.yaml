@@ -65,10 +65,91 @@ spec:
                 description: RKE1NodeTemplateParameters are the configurable fields
                   of a RKE1NodeTemplate.
                 properties:
-                  configurableField:
+                  amazonec2Config:
+                    description: Amazonec2Config contains the parameters for the amazonec2
+                      driver.
+                    properties:
+                      ami:
+                        type: string
+                      blockDurationMinutes:
+                        type: integer
+                      deviceName:
+                        type: string
+                      encryptEbsVolume:
+                        type: boolean
+                      endpoint:
+                        type: string
+                      httpEndpoint:
+                        type: string
+                      httpTokens:
+                        type: string
+                      iamInstanceProfile:
+                        type: string
+                      insecureTransport:
+                        type: boolean
+                      instanceType:
+                        type: string
+                      keypairName:
+                        type: string
+                      kmsKey:
+                        type: string
+                      monitoring:
+                        type: boolean
+                      privateAddressOnly:
+                        type: boolean
+                      region:
+                        type: string
+                      requestSpotInstance:
+                        type: boolean
+                      retries:
+                        type: integer
+                      rootSize:
+                        type: integer
+                      securityGroup:
+                        type: string
+                      securityGroupReadonly:
+                        type: boolean
+                      sessionToken:
+                        type: string
+                      spotPrice:
+                        type: string
+                      sshKeyContents:
+                        type: string
+                      sshUser:
+                        type: string
+                      subnetId:
+                        type: string
+                      subnetIdRef:
+                        type: string
+                      tags:
+                        type: string
+                      useEbsOptimizedInstance:
+                        type: boolean
+                      usePrivateAddress:
+                        type: boolean
+                      userdata:
+                        type: string
+                      volumeType:
+                        type: string
+                      vpcId:
+                        type: string
+                      vpcIdRef:
+                        type: string
+                      zone:
+                        type: string
+                    type: object
+                  cloudCredentialId:
                     type: string
-                required:
-                - configurableField
+                  displayName:
+                    type: string
+                  driver:
+                    type: string
+                  engineInstallURL:
+                    type: string
+                  name:
+                    type: string
+                  useInternalIPAddress:
+                    type: boolean
                 type: object
               providerConfigRef:
                 default:
@@ -249,7 +330,7 @@ spec:
                 description: RKE1NodeTemplateObservation are the observable fields
                   of a RKE1NodeTemplate.
                 properties:
-                  observableField:
+                  id:
                     type: string
                 type: object
               conditions:

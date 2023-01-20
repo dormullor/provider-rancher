@@ -5,14 +5,14 @@ metadata:
   name: example-provider-secret
 type: Opaque
 data:
-  credentials: <RANCHER_API_BASE64_ENCODED_TOKEN>
+  credentials: dG9rZW4tNTluN3E6dmRyZDU5Z2Y4NGJjdHBiOHdyN3E5eGJsYnI4NWxnZGI2a21mZjhqcHZ0NWJjZzZyd3dmOG42
 ---
 apiVersion: rancher.crossplane.io/v1alpha1
 kind: ProviderConfig
 metadata:
   name: example
 spec:
-  rancherHost: https://rancher.example.com
+  rancherHost: https://rancher-infra-main-01.runailabs.com
   credentials:
     source: Secret
     secretRef:

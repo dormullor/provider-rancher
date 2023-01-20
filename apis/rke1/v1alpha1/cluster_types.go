@@ -105,7 +105,7 @@ type RKE1Cluster struct {
 // +kubebuilder:object:root=true
 
 // ClusterList contains a list of Cluster
-type ClusterList struct {
+type RKE1ClusterList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []RKE1Cluster `json:"items"`
@@ -120,5 +120,5 @@ var (
 )
 
 func init() {
-	SchemeBuilder.Register(&RKE1Cluster{}, &ClusterList{})
+	SchemeBuilder.Register(&RKE1Cluster{}, &RKE1ClusterList{})
 }

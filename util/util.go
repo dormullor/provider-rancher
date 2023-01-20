@@ -210,3 +210,96 @@ func dclose(c io.Closer) {
 		log.Fatal(err)
 	}
 }
+
+func CreateNodeTemplate(host, token string, httpClient http.Client, nodeTemplate v1alpha1.RKE1NodeTemplate, ctx context.Context) (string, error) {
+	url := fmt.Sprintf("%s/v3/nodetemplate", host)
+	nodeTemplateJson, err := json.Marshal(nodeTemplate.Spec.ForProvider)
+	if err != nil {
+		return "", err
+	}
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(nodeTemplateJson))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Add("Authorization", token)
+	req.Header.Add("Accept", "application/json")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer dclose(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var result *v1alpha1.Data
+	if err := json.Unmarshal(body, &result); err != nil {
+		fmt.Println("Can not unmarshal JSON")
+	}
+	if resp.StatusCode != 201 {
+		return "", fmt.Errorf("failed to create node template: %s", string(body))
+	}
+
+	return result.ID, nil
+}
+
+func DeleteNodeTemplate(host, token, nodeTemplateID string, httpClient http.Client, ctx context.Context) error {
+	url := fmt.Sprintf("%s/v3/nodetemplates/%s", host, nodeTemplateID)
+	fmt.Println(url)
+	req, err := http.NewRequestWithContext(ctx, "DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Authorization", token)
+	req.Header.Add("Accept", "application/json")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer dclose(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("failed to delete node template: %s", string(body))
+	}
+	return nil
+}
+
+func GetNodeTemplates(host, token string, httpClient http.Client, ctx context.Context) (v1alpha1.ClusterResponse, error) {
+	url := fmt.Sprintf("%s/v3/nodetemplates", host)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return v1alpha1.ClusterResponse{}, err
+	}
+	req.Header.Add("Authorization", token)
+	req.Header.Add("Accept", "application/json")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return v1alpha1.ClusterResponse{}, err
+	}
+	defer dclose(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return v1alpha1.ClusterResponse{}, err
+	}
+
+	var result *v1alpha1.ClusterResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		fmt.Println("Can not unmarshal JSON")
+	}
+	if resp.StatusCode != 200 {
+		return v1alpha1.ClusterResponse{}, fmt.Errorf("failed to get node templates: %s", string(body))
+	}
+
+	return *result, nil
+}

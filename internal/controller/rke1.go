@@ -21,6 +21,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"github.com/dormullor/provider-rancher/internal/controller/rke1cluster"
+	"github.com/dormullor/provider-rancher/internal/controller/rke1nodetemplate"
 	"github.com/dormullor/provider-rancher/internal/controller/config"
 )
 
@@ -29,7 +30,8 @@ import (
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		config.Setup,
-		cluster.Setup,
+		rke1cluster.Setup,
+		rke1nodetemplate.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err
