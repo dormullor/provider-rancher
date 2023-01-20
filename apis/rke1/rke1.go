@@ -14,5 +14,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package rancher contains group rancher API versions
+// Package rke1 contains group rke1 API versions
 package rke1

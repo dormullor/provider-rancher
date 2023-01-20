@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.10.0
   creationTimestamp: null
-  name: rke1clusters.rancher.rancher.crossplane.io
+  name: rke1clusters.rke1.rancher.crossplane.io
 spec:
-  group: rancher.rancher.crossplane.io
+  group: rke1.rancher.crossplane.io
   names:
     categories:
     - crossplane

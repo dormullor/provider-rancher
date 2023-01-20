@@ -16,7 +16,7 @@ limitations under the License.
 
 // Package v1alpha1 contains the v1alpha1 group Sample resources of the Rancher provider.
 // +kubebuilder:object:generate=true
-// +groupName=rancher.rancher.crossplane.io
+// +groupName=rke1.rancher.crossplane.io
 // +versionName=v1alpha1
 package v1alpha1
 
@@ -27,7 +27,7 @@ import (
 
 // Package type metadata.
 const (
-	Group   = "rancher.rancher.crossplane.io"
+	Group   = "rke1.rancher.crossplane.io"
 	Version = "v1alpha1"
 )
 

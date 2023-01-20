@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/crossplane/crossplane-runtime v0.18.0
 	github.com/crossplane/crossplane-tools v0.0.0-20220901191540-806c0b01097b
+	github.com/google/go-cmp v0.5.9
 	github.com/pkg/errors v0.9.1
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	k8s.io/apimachinery v0.25.4
@@ -13,10 +14,7 @@ require (
 	sigs.k8s.io/controller-tools v0.10.0
 )
 
-require (
-	github.com/google/go-cmp v0.5.9 // indirect
-	github.com/stretchr/objx v0.2.0 // indirect
-)
+require github.com/stretchr/objx v0.2.0 // indirect
 
 require (
 	github.com/PuerkitoBio/purell v1.1.1 // indirect

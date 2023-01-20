@@ -84,3 +84,69 @@ func (mg *RKE1Cluster) SetPublishConnectionDetailsTo(r *xpv1.PublishConnectionDe
 func (mg *RKE1Cluster) SetWriteConnectionSecretToReference(r *xpv1.SecretReference) {
 	mg.Spec.WriteConnectionSecretToReference = r
 }
+
+// GetCondition of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) GetCondition(ct xpv1.ConditionType) xpv1.Condition {
+	return mg.Status.GetCondition(ct)
+}
+
+// GetDeletionPolicy of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) GetDeletionPolicy() xpv1.DeletionPolicy {
+	return mg.Spec.DeletionPolicy
+}
+
+// GetProviderConfigReference of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) GetProviderConfigReference() *xpv1.Reference {
+	return mg.Spec.ProviderConfigReference
+}
+
+/*
+GetProviderReference of this RKE1NodeTemplate.
+Deprecated: Use GetProviderConfigReference.
+*/
+func (mg *RKE1NodeTemplate) GetProviderReference() *xpv1.Reference {
+	return mg.Spec.ProviderReference
+}
+
+// GetPublishConnectionDetailsTo of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) GetPublishConnectionDetailsTo() *xpv1.PublishConnectionDetailsTo {
+	return mg.Spec.PublishConnectionDetailsTo
+}
+
+// GetWriteConnectionSecretToReference of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) GetWriteConnectionSecretToReference() *xpv1.SecretReference {
+	return mg.Spec.WriteConnectionSecretToReference
+}
+
+// SetConditions of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) SetConditions(c ...xpv1.Condition) {
+	mg.Status.SetConditions(c...)
+}
+
+// SetDeletionPolicy of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) SetDeletionPolicy(r xpv1.DeletionPolicy) {
+	mg.Spec.DeletionPolicy = r
+}
+
+// SetProviderConfigReference of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) SetProviderConfigReference(r *xpv1.Reference) {
+	mg.Spec.ProviderConfigReference = r
+}
+
+/*
+SetProviderReference of this RKE1NodeTemplate.
+Deprecated: Use SetProviderConfigReference.
+*/
+func (mg *RKE1NodeTemplate) SetProviderReference(r *xpv1.Reference) {
+	mg.Spec.ProviderReference = r
+}
+
+// SetPublishConnectionDetailsTo of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) SetPublishConnectionDetailsTo(r *xpv1.PublishConnectionDetailsTo) {
+	mg.Spec.PublishConnectionDetailsTo = r
+}
+
+// SetWriteConnectionSecretToReference of this RKE1NodeTemplate.
+func (mg *RKE1NodeTemplate) SetWriteConnectionSecretToReference(r *xpv1.SecretReference) {
+	mg.Spec.WriteConnectionSecretToReference = r
+}
