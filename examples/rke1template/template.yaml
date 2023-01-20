@@ -1,3 +1,4 @@
+## vpcIdRef and subnetIdRef requiered a tag with ManagedBy: crossplane
 apiVersion: rke1.rancher.crossplane.io/v1alpha1
 kind: RKE1NodeTemplate
 metadata:
