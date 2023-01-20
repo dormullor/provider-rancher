@@ -1,5 +1,5 @@
 apiVersion: rancher.rancher.crossplane.io/v1alpha1
-kind: Cluster
+kind: RKE1Cluster
 metadata:
   name: example
 spec:

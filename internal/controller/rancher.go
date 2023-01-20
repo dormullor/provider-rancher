@@ -20,7 +20,7 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/controller"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/dormullor/provider-rancher/internal/controller/cluster"
+	"github.com/dormullor/provider-rancher/internal/controller/rke1cluster"
 	"github.com/dormullor/provider-rancher/internal/controller/config"
 )
 

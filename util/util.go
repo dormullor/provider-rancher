@@ -113,7 +113,7 @@ func GetClusters(host, token string, httpClient http.Client, ctx context.Context
 	return *result, nil
 }
 
-func CreateCluster(host, token string, httpClient http.Client, cluster *v1alpha1.Cluster, ctx context.Context) (string, error) {
+func CreateCluster(host, token string, httpClient http.Client, cluster *v1alpha1.RKE1Cluster, ctx context.Context) (string, error) {
 	url := fmt.Sprintf("%s/v3/clusters", host)
 	clusterJson, err := json.Marshal(cluster.Spec.ForProvider.RKE)
 	if err != nil {

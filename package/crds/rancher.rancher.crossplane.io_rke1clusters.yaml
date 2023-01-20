@@ -5,7 +5,7 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.10.0
   creationTimestamp: null
-  name: clusters.rancher.rancher.crossplane.io
+  name: rke1clusters.rancher.rancher.crossplane.io
 spec:
   group: rancher.rancher.crossplane.io
   names:
@@ -13,10 +13,10 @@ spec:
     - crossplane
     - managed
     - rancher
-    kind: Cluster
-    listKind: ClusterList
-    plural: clusters
-    singular: cluster
+    kind: RKE1Cluster
+    listKind: RKE1ClusterList
+    plural: rke1clusters
+    singular: rke1cluster
   scope: Cluster
   versions:
   - additionalPrinterColumns:
