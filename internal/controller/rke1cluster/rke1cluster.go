@@ -59,8 +59,8 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 	r := managed.NewReconciler(mgr,
 		resource.ManagedKind(v1alpha1.ClusterGroupVersionKind),
 		managed.WithExternalConnecter(&connector{
-			kube:         mgr.GetClient(),
-			usage:        resource.NewProviderConfigUsageTracker(mgr.GetClient(), &apisv1alpha1.ProviderConfigUsage{})}),
+			kube:  mgr.GetClient(),
+			usage: resource.NewProviderConfigUsageTracker(mgr.GetClient(), &apisv1alpha1.ProviderConfigUsage{})}),
 		managed.WithLogger(o.Logger.WithValues("controller", name)),
 		managed.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))),
 		managed.WithConnectionPublishers(cps...))
@@ -75,8 +75,8 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 // A connector is expected to produce an ExternalClient when its Connect method
 // is called.
 type connector struct {
-	kube         client.Client
-	usage        resource.Tracker
+	kube  client.Client
+	usage resource.Tracker
 }
 
 // Connect typically produces an ExternalClient
@@ -154,11 +154,23 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	if !ok {
 		return managed.ExternalCreation{}, errors.New(errNotCluster)
 	}
+
+	for index, node := range cr.Spec.ForProvider.NodePools {
+		if node.NodeTemplateIDRef != "" {
+			nodeTemplateID, err := util.GetNodeTemplateByName(c.rancherHost, c.token, node.NodeTemplateIDRef, c.httpClient, ctx)
+			if err != nil {
+				return managed.ExternalCreation{}, err
+			}
+			fmt.Println(nodeTemplateID)
+			cr.Spec.ForProvider.NodePools[index].NodeTemplateID = nodeTemplateID
+		}
+	}
+
 	clusterId, err := util.CreateCluster(c.rancherHost, c.token, c.httpClient, cr, ctx)
 	if err != nil {
 		return managed.ExternalCreation{}, err
 	}
-	
+
 	for _, node := range cr.Spec.ForProvider.NodePools {
 		err := util.CreateNodePool(c.rancherHost, c.token, clusterId, c.httpClient, node, ctx)
 		if err != nil {

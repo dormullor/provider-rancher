@@ -44,6 +44,7 @@ type RKENodePool struct {
 	Labels                  map[string]string `json:"labels,omitempty"`
 	Name                    string            `json:"name,omitempty"`
 	NodeTemplateID          string            `json:"nodeTemplateId,omitempty"`
+	NodeTemplateIDRef       string            `json:"nodeTemplateIdRef,omitempty"`
 	Quantity                int64             `json:"quantity,omitempty"`
 	Worker                  bool              `json:"worker,omitempty"`
 }

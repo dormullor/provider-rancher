@@ -6,7 +6,7 @@ metadata:
 spec:
   forProvider:
     name: example
-    cloudCredentialId: "cattle-global-data:example-credential"
+    cloudCredentialId: "cattle-global-data:cc-xhpt8"
     displayName: example
     driver: amazonec2
     engineInstallURL: https://releases.rancher.com/install-docker/20.10.sh

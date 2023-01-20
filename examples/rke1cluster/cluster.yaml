@@ -88,7 +88,7 @@ spec:
         labels:
           foo: bar
         name: example-worker
-        nodeTemplateId: cattle-global-nt:nt-pcfbg
+        nodeTemplateIdRef: example
         quantity: 2
         worker: true
       - annotations: {}
@@ -102,7 +102,7 @@ spec:
         labels:
           foo: bar
         name: example-master
-        nodeTemplateId: cattle-global-nt:nt-pcfbg
+        nodeTemplateIdRef: example
         quantity: 1
         worker: true
   providerConfigRef:

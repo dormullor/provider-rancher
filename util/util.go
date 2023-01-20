@@ -366,3 +366,34 @@ func GetSubnetIdByTags(tags map[string]string, region string) (string, error) {
 	}
 	return *result.Subnets[0].SubnetId, nil
 }
+
+func GetNodeTemplateByName(host, token, name string, httpClient http.Client, ctx context.Context) (string, error) {
+	url := fmt.Sprintf("%s/v3/nodetemplates?name=%s", host, name)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Add("Authorization", token)
+	req.Header.Add("Accept", "application/json")
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer dclose(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var result *v1alpha1.ClusterResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		fmt.Println("Can not unmarshal JSON")
+	}
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("failed to get node template: %s", string(body))
+	}
+
+	return result.Data[0].ID, nil
+}
