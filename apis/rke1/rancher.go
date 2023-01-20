@@ -15,4 +15,4 @@ limitations under the License.
 */
 
 // Package rancher contains group rancher API versions
-package rancher
+package rke1

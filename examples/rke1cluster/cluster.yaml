@@ -1,4 +1,4 @@
-apiVersion: rancher.rancher.crossplane.io/v1alpha1
+apiVersion: rancher.rke1.crossplane.io/v1alpha1
 kind: RKE1Cluster
 metadata:
   name: example
