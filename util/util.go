@@ -51,7 +51,7 @@ func GenerateKubeconfig(ctx context.Context, host, clusterID, token, crName, crN
 	exist := KubeconfigSecretExist(ctx, crName, crNamespace, client)
 	if !exist {
 		url := fmt.Sprintf("%s/v3/clusters/%s?action=generateKubeconfig", host, clusterID)
-		req, err := http.NewRequest("POST", url, nil)
+		req, err := http.NewRequestWithContext(ctx,"POST", url ,nil)
 		if err != nil {
 			return err
 		}
