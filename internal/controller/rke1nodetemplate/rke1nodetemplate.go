@@ -20,9 +20,10 @@ import (
 	"context"
 	b64 "encoding/base64"
 	"fmt"
+	"net/http"
+
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/types"
-	"net/http"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
