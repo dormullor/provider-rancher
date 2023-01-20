@@ -5,7 +5,7 @@ metadata:
 spec:
   forProvider:
     name: example
-    cloudCredentialId: "cattle-global-data:cc-xhpt8"
+    cloudCredentialId: "cattle-global-data:example-credential"
     displayName: example
     driver: amazonec2
     engineInstallURL: https://releases.rancher.com/install-docker/20.10.sh
@@ -29,19 +29,19 @@ spec:
       requestSpotInstance: false
       retries: 5
       rootSize: 100
-      securityGroup: null
+      securityGroup: ""
       securityGroupReadonly: false
       sessionToken: ""
       spotPrice: "0.50"
       sshKeyContents: ""
       sshUser: ubuntu
-      subnetId: subnet-e5678cae
+      subnetIdRef: example-subnet
       tags: ""
       useEbsOptimizedInstance: false
       usePrivateAddress: false
       userdata: ""
       volumeType: gp2
-      vpcId: vpc-f04b5c89
+      vpcIdRef: example-vpc
       zone: a
   providerConfigRef:
     name: example

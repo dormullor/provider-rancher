@@ -47,6 +47,7 @@ const (
 	errGetCreds               = "cannot get credentials"
 	errCreateRKE1NodeTemplate = "cannot create RKE1NodeTemplate"
 	errNewClient              = "cannot create new Service"
+	ManagedByCrossplane       = "crossplane"
 )
 
 // Setup adds a controller that reconciles RKE1NodeTemplate managed resources.
@@ -131,7 +132,7 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 	if err != nil {
 		return managed.ExternalObservation{}, err
 	}
-	
+
 	templateFound := false
 	for _, template := range results.Data {
 		if template.Name == cr.Name {
@@ -156,6 +157,30 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	cr, ok := mg.(*v1alpha1.RKE1NodeTemplate)
 	if !ok {
 		return managed.ExternalCreation{}, errors.New(errNotRKE1NodeTemplate)
+	}
+
+	if cr.Spec.ForProvider.Amazonec2Config.VpcIDRef != "" {
+		tags := map[string]string{
+			"Name":      cr.Spec.ForProvider.Amazonec2Config.VpcIDRef,
+			"ManagedBy": ManagedByCrossplane,
+		}
+		vpcID, err := util.GetVpcIdByTags(tags, cr.Spec.ForProvider.Amazonec2Config.Region)
+		if err != nil {
+			return managed.ExternalCreation{}, err
+		}
+		cr.Spec.ForProvider.Amazonec2Config.VpcID = vpcID
+	}
+
+	if cr.Spec.ForProvider.Amazonec2Config.SubnetIDRef != "" {
+		tags := map[string]string{
+			"Name":      cr.Spec.ForProvider.Amazonec2Config.SubnetIDRef,
+			"ManagedBy": ManagedByCrossplane,
+		}
+		subnetID, err := util.GetSubnetIdByTags(tags, cr.Spec.ForProvider.Amazonec2Config.Region)
+		if err != nil {
+			return managed.ExternalCreation{}, err
+		}
+		cr.Spec.ForProvider.Amazonec2Config.SubnetID = subnetID
 	}
 
 	_, err := util.CreateNodeTemplate(c.rancherHost, c.token, c.httpClient, *cr, ctx)

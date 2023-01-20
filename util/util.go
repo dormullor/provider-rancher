@@ -9,7 +9,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/dormullor/provider-rancher/apis/rke1/v1alpha1"
+	"github.com/aws/aws-sdk-go/aws/session"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -302,4 +305,64 @@ func GetNodeTemplates(host, token string, httpClient http.Client, ctx context.Co
 	}
 
 	return *result, nil
+}
+
+func GetVpcIdByTags(tags map[string]string, region string) (string, error) {
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(region)},
+	)
+	if err != nil {
+		return "", err
+	}
+	svc := ec2.New(sess)
+	input := &ec2.DescribeVpcsInput{
+		Filters: []*ec2.Filter{
+			{
+				Name:   aws.String("tag:Name"),
+				Values: []*string{aws.String(tags["Name"])},
+			},
+			{
+				Name:   aws.String("tag:ManagedBy"),
+				Values: []*string{aws.String(tags["ManagedBy"])},
+			},
+		},
+	}
+	result, err := svc.DescribeVpcs(input)
+	if err != nil {
+		return "", err
+	}
+	if len(result.Vpcs) == 0 {
+		return "", fmt.Errorf("vpc not found")
+	}
+	return *result.Vpcs[0].VpcId, nil
+}
+
+func GetSubnetIdByTags(tags map[string]string, region string) (string, error) {
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(region)},
+	)
+	if err != nil {
+		return "", err
+	}
+	svc := ec2.New(sess)
+	input := &ec2.DescribeSubnetsInput{
+		Filters: []*ec2.Filter{
+			{
+				Name:   aws.String("tag:Name"),
+				Values: []*string{aws.String(tags["Name"])},
+			},
+			{
+				Name:   aws.String("tag:ManagedBy"),
+				Values: []*string{aws.String(tags["ManagedBy"])},
+			},
+		},
+	}
+	result, err := svc.DescribeSubnets(input)
+	if err != nil {
+		return "", err
+	}
+	if len(result.Subnets) == 0 {
+		return "", fmt.Errorf("subnet not found")
+	}
+	return *result.Subnets[0].SubnetId, nil
 }
