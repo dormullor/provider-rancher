@@ -46,7 +46,6 @@ const (
 	errGetPC                  = "cannot get ProviderConfig"
 	errGetCreds               = "cannot get credentials"
 	errCreateRKE1NodeTemplate = "cannot create RKE1NodeTemplate"
-	errNewClient              = "cannot create new Service"
 	ManagedByCrossplane       = "crossplane"
 )
 

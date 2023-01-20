@@ -10,9 +10,9 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/dormullor/provider-rancher/apis/rke1/v1alpha1"
-	"github.com/aws/aws-sdk-go/aws/session"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -44,10 +44,7 @@ func CreateKubeconfigSecret(ctx context.Context, kubeconfig []byte, clusterName 
 
 func KubeconfigSecretExist(ctx context.Context, clusterName string, namespace string, kubeClient client.Client) bool {
 	err := kubeClient.Get(ctx, client.ObjectKey{Name: fmt.Sprintf("%s-kubeconfig", clusterName), Namespace: namespace}, &corev1.Secret{})
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func GenerateKubeconfig(ctx context.Context, host, clusterID, token, crName, crNamespace string, httpClient http.Client, client client.Client) error {

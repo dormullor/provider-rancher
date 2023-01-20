@@ -20,9 +20,9 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/controller"
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	"github.com/dormullor/provider-rancher/internal/controller/config"
 	"github.com/dormullor/provider-rancher/internal/controller/rke1cluster"
 	"github.com/dormullor/provider-rancher/internal/controller/rke1nodetemplate"
-	"github.com/dormullor/provider-rancher/internal/controller/config"
 )
 
 // Setup creates all Rancher controllers with the supplied logger and adds them to
