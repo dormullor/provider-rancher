@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/dormullor/provider-rancher/apis/rke1/v1alpha1"
@@ -304,9 +305,11 @@ func GetNodeTemplates(host, token string, httpClient http.Client, ctx context.Co
 	return *result, nil
 }
 
-func GetVpcIdByTags(tags map[string]string, region string) (string, error) {
+func GetVpcIdByTags(tags map[string]string, region string, Credentials *credentials.Credentials) (string, error) {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(region)},
+		Region:      aws.String(region),
+		Credentials: Credentials,
+	},
 	)
 	if err != nil {
 		return "", err
@@ -334,9 +337,10 @@ func GetVpcIdByTags(tags map[string]string, region string) (string, error) {
 	return *result.Vpcs[0].VpcId, nil
 }
 
-func GetSubnetIdByTags(tags map[string]string, region string) (string, error) {
+func GetSubnetIdByTags(tags map[string]string, region string, Credentials *credentials.Credentials) (string, error) {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(region)},
+		Region:      aws.String(region),
+		Credentials: Credentials},
 	)
 	if err != nil {
 		return "", err

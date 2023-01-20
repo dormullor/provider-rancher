@@ -21,6 +21,7 @@ import (
 	b64 "encoding/base64"
 	"fmt"
 	"net/http"
+	"reflect"
 
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -34,6 +35,7 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	"github.com/dormullor/provider-rancher/apis/rke1/v1alpha1"
 	apisv1alpha1 "github.com/dormullor/provider-rancher/apis/v1alpha1"
@@ -107,19 +109,42 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 	if err != nil {
 		return nil, errors.Wrap(err, errGetCreds)
 	}
+
+	awsCredentials := &credentials.Credentials{}
+	if !reflect.DeepEqual(pc.Spec.AWScreds, apisv1alpha1.AWScreds{}) {
+		ak := pc.Spec.AWScreds.AccessKeyID
+		sk := pc.Spec.AWScreds.SecretAccessKey
+		awsAccessKey, err := resource.CommonCredentialExtractor(ctx, ak.Source, c.kube, ak.CommonCredentialSelectors)
+		if err != nil {
+			return nil, errors.Wrap(err, errGetCreds)
+		}
+		awsSecretKey, err := resource.CommonCredentialExtractor(ctx, sk.Source, c.kube, sk.CommonCredentialSelectors)
+		if err != nil {
+			return nil, errors.Wrap(err, errGetCreds)
+		}
+		awsCredentials = credentials.NewStaticCredentials(string(awsAccessKey), string(awsSecretKey), "")
+	}
+
 	rancherHost := pc.Spec.RancherHost
 	token := "Basic " + b64.StdEncoding.EncodeToString(tokenDecoded)
 	client := &http.Client{}
-	return &external{httpClient: *client, token: token, kube: c.kube, rancherHost: rancherHost}, nil
+	return &external{
+		httpClient:     *client,
+		token:          token,
+		kube:           c.kube,
+		rancherHost:    rancherHost,
+		awsCredentials: awsCredentials,
+	}, nil
 }
 
 // An ExternalClient observes, then either creates, updates, or deletes an
 // external resource to ensure it reflects the managed resource's desired state.
 type external struct {
-	httpClient  http.Client
-	token       string
-	rancherHost string
-	kube        client.Client
+	httpClient     http.Client
+	token          string
+	rancherHost    string
+	kube           client.Client
+	awsCredentials *credentials.Credentials
 }
 
 func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) {
@@ -164,7 +189,7 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 			"Name":      cr.Spec.ForProvider.Amazonec2Config.VpcIDRef,
 			"ManagedBy": ManagedByCrossplane,
 		}
-		vpcID, err := util.GetVpcIdByTags(tags, cr.Spec.ForProvider.Amazonec2Config.Region)
+		vpcID, err := util.GetVpcIdByTags(tags, cr.Spec.ForProvider.Amazonec2Config.Region, c.awsCredentials)
 		if err != nil {
 			return managed.ExternalCreation{}, err
 		}
@@ -176,7 +201,7 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 			"Name":      cr.Spec.ForProvider.Amazonec2Config.SubnetIDRef,
 			"ManagedBy": ManagedByCrossplane,
 		}
-		subnetID, err := util.GetSubnetIdByTags(tags, cr.Spec.ForProvider.Amazonec2Config.Region)
+		subnetID, err := util.GetSubnetIdByTags(tags, cr.Spec.ForProvider.Amazonec2Config.Region, c.awsCredentials)
 		if err != nil {
 			return managed.ExternalCreation{}, err
 		}
