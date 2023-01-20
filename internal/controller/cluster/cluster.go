@@ -34,7 +34,7 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/ratelimiter"
 	"github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
-	"github.com/dormullor/provider-rancher/apis/rancher/v1alpha1"
+	"github.com/dormullor/provider-rancher/apis/rke1cluster/v1alpha1"
 	apisv1alpha1 "github.com/dormullor/provider-rancher/apis/v1alpha1"
 	"github.com/dormullor/provider-rancher/internal/controller/features"
 	"github.com/dormullor/provider-rancher/util"
