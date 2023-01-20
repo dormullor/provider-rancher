@@ -305,10 +305,10 @@ func GetNodeTemplates(host, token string, httpClient http.Client, ctx context.Co
 	return *result, nil
 }
 
-func GetVpcIdByTags(tags map[string]string, region string, Credentials *credentials.Credentials) (string, error) {
+func GetVpcIdByTags(tags map[string]string, region string, credentials *credentials.Credentials) (string, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region:      aws.String(region),
-		Credentials: Credentials,
+		Credentials: credentials,
 	},
 	)
 	if err != nil {
@@ -337,10 +337,10 @@ func GetVpcIdByTags(tags map[string]string, region string, Credentials *credenti
 	return *result.Vpcs[0].VpcId, nil
 }
 
-func GetSubnetIdByTags(tags map[string]string, region string, Credentials *credentials.Credentials) (string, error) {
+func GetSubnetIdByTags(tags map[string]string, region string, credentials *credentials.Credentials) (string, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region:      aws.String(region),
-		Credentials: Credentials},
+		Credentials: credentials},
 	)
 	if err != nil {
 		return "", err
