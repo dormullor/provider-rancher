@@ -161,7 +161,6 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 			if err != nil {
 				return managed.ExternalCreation{}, err
 			}
-			fmt.Println(nodeTemplateID)
 			cr.Spec.ForProvider.NodePools[index].NodeTemplateID = nodeTemplateID
 		}
 	}
