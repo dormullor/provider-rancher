@@ -31,6 +31,7 @@ spec:
       retries: 5
       rootSize: 100
       securityGroup: ""
+      securityGroupRef: example-security-group
       securityGroupReadonly: false
       sessionToken: ""
       spotPrice: "0.50"
