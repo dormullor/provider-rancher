@@ -208,6 +208,18 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 		cr.Spec.ForProvider.Amazonec2Config.SubnetID = subnetID
 	}
 
+	if cr.Spec.ForProvider.Amazonec2Config.SecurityGroupRef != "" {
+		tags := map[string]string{
+			"Name":      cr.Spec.ForProvider.Amazonec2Config.SecurityGroupRef,
+			"ManagedBy": ManagedByCrossplane,
+		}
+		securityGroupID, err := util.GetSecurityGroupIdByTags(tags, cr.Spec.ForProvider.Amazonec2Config.Region, c.awsCredentials)
+		if err != nil {
+			return managed.ExternalCreation{}, err
+		}
+		cr.Spec.ForProvider.Amazonec2Config.SecurityGroup = securityGroupID
+	}
+
 	_, err := util.CreateNodeTemplate(c.rancherHost, c.token, c.httpClient, *cr, ctx)
 	if err != nil {
 		return managed.ExternalCreation{}, errors.Wrap(err, errCreateRKE1NodeTemplate)

@@ -57,6 +57,7 @@ type Amazonec2Config struct {
 	Retries                 int    `json:"retries,omitempty"`
 	RootSize                int    `json:"rootSize,omitempty"`
 	SecurityGroup           string `json:"securityGroup,omitempty"`
+	SecurityGroupRef        string `json:"securityGroupRef,omitempty"`
 	SecurityGroupReadonly   bool   `json:"securityGroupReadonly,omitempty"`
 	SessionToken            string `json:"sessionToken,omitempty"`
 	SpotPrice               string `json:"spotPrice,omitempty"`
