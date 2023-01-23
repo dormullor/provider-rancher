@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package cluster
+package rke1cluster
 
 import (
 	"context"
@@ -34,7 +34,7 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/ratelimiter"
 	"github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
-	"github.com/dormullor/provider-rancher/apis/rancher/v1alpha1"
+	"github.com/dormullor/provider-rancher/apis/rke1/v1alpha1"
 	apisv1alpha1 "github.com/dormullor/provider-rancher/apis/v1alpha1"
 	"github.com/dormullor/provider-rancher/internal/controller/features"
 	"github.com/dormullor/provider-rancher/util"
@@ -45,13 +45,6 @@ const (
 	errTrackPCUsage = "cannot track ProviderConfig usage"
 	errGetPC        = "cannot get ProviderConfig"
 	errGetCreds     = "cannot get credentials"
-)
-
-// A NoOpService does nothing.
-type NoOpService struct{}
-
-var (
-	newNoOpService = func(_ []byte) (interface{}, error) { return &NoOpService{}, nil }
 )
 
 // Setup adds a controller that reconciles Cluster managed resources.
@@ -66,9 +59,8 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 	r := managed.NewReconciler(mgr,
 		resource.ManagedKind(v1alpha1.ClusterGroupVersionKind),
 		managed.WithExternalConnecter(&connector{
-			kube:         mgr.GetClient(),
-			usage:        resource.NewProviderConfigUsageTracker(mgr.GetClient(), &apisv1alpha1.ProviderConfigUsage{}),
-			newServiceFn: newNoOpService}),
+			kube:  mgr.GetClient(),
+			usage: resource.NewProviderConfigUsageTracker(mgr.GetClient(), &apisv1alpha1.ProviderConfigUsage{})}),
 		managed.WithLogger(o.Logger.WithValues("controller", name)),
 		managed.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))),
 		managed.WithConnectionPublishers(cps...))
@@ -76,21 +68,20 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		Named(name).
 		WithOptions(o.ForControllerRuntime()).
-		For(&v1alpha1.Cluster{}).
+		For(&v1alpha1.RKE1Cluster{}).
 		Complete(ratelimiter.NewReconciler(name, r, o.GlobalRateLimiter))
 }
 
 // A connector is expected to produce an ExternalClient when its Connect method
 // is called.
 type connector struct {
-	kube         client.Client
-	usage        resource.Tracker
-	newServiceFn func(creds []byte) (interface{}, error)
+	kube  client.Client
+	usage resource.Tracker
 }
 
 // Connect typically produces an ExternalClient
 func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.ExternalClient, error) {
-	cr, ok := mg.(*v1alpha1.Cluster)
+	cr, ok := mg.(*v1alpha1.RKE1Cluster)
 	if !ok {
 		return nil, errors.New(errNotCluster)
 	}
@@ -125,7 +116,7 @@ type external struct {
 }
 
 func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) {
-	cr, ok := mg.(*v1alpha1.Cluster)
+	cr, ok := mg.(*v1alpha1.RKE1Cluster)
 	if !ok {
 		return managed.ExternalObservation{}, errors.New(errNotCluster)
 	}
@@ -159,14 +150,26 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 }
 
 func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.ExternalCreation, error) {
-	cr, ok := mg.(*v1alpha1.Cluster)
+	cr, ok := mg.(*v1alpha1.RKE1Cluster)
 	if !ok {
 		return managed.ExternalCreation{}, errors.New(errNotCluster)
 	}
+
+	for index, node := range cr.Spec.ForProvider.NodePools {
+		if node.NodeTemplateIDRef != "" {
+			nodeTemplateID, err := util.GetNodeTemplateByName(c.rancherHost, c.token, node.NodeTemplateIDRef, c.httpClient, ctx)
+			if err != nil {
+				return managed.ExternalCreation{}, err
+			}
+			cr.Spec.ForProvider.NodePools[index].NodeTemplateID = nodeTemplateID
+		}
+	}
+
 	clusterId, err := util.CreateCluster(c.rancherHost, c.token, c.httpClient, cr, ctx)
 	if err != nil {
 		return managed.ExternalCreation{}, err
 	}
+
 	for _, node := range cr.Spec.ForProvider.NodePools {
 		err := util.CreateNodePool(c.rancherHost, c.token, clusterId, c.httpClient, node, ctx)
 		if err != nil {
@@ -179,7 +182,7 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 }
 
 func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.ExternalUpdate, error) {
-	cr, ok := mg.(*v1alpha1.Cluster)
+	cr, ok := mg.(*v1alpha1.RKE1Cluster)
 	if !ok {
 		return managed.ExternalUpdate{}, errors.New(errNotCluster)
 	}
@@ -192,7 +195,7 @@ func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 }
 
 func (c *external) Delete(ctx context.Context, mg resource.Managed) error {
-	cr, ok := mg.(*v1alpha1.Cluster)
+	cr, ok := mg.(*v1alpha1.RKE1Cluster)
 	if !ok {
 		return errors.New(errNotCluster)
 	}

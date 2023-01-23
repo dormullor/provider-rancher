@@ -6,6 +6,8 @@ metadata:
 type: Opaque
 data:
   credentials: <RANCHER_API_BASE64_ENCODED_TOKEN>
+  # aws_access_key_id: <AWS_ACCESS_KEY_ID_BASE64_ENCODED>
+  # aws_secret_access_key: <AWS_SECRET_ACCESS_KEY_BASE64_ENCODED>
 ---
 apiVersion: rancher.crossplane.io/v1alpha1
 kind: ProviderConfig
@@ -13,6 +15,19 @@ metadata:
   name: example
 spec:
   rancherHost: https://rancher.example.com
+  # awsCreds:
+  #   accessKeyID:
+  #     source: Secret
+  #     secretRef:
+  #       namespace: default
+  #       name: example-provider-secret
+  #       key: aws_access_key_id
+  #   secretAccessKey:
+  #     source: Secret
+  #     secretRef:
+  #       namespace: default
+  #       name: example-provider-secret
+  #       key: aws_secret_access_key
   credentials:
     source: Secret
     secretRef:

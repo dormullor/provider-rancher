@@ -1,0 +1,49 @@
+## vpcIdRef, subnetIdRef and securityGroupRef required a tag with ManagedBy: crossplane
+apiVersion: rke1.rancher.crossplane.io/v1alpha1
+kind: RKE1NodeTemplate
+metadata:
+  name: example
+spec:
+  forProvider:
+    name: example
+    cloudCredentialId: "cattle-global-data:cc-xhpt8"
+    displayName: example
+    driver: amazonec2
+    engineInstallURL: https://releases.rancher.com/install-docker/20.10.sh
+    useInternalIPAddress: true
+    amazonec2Config:
+      ami: ""
+      blockDurationMinutes: 0
+      deviceName: ""
+      encryptEbsVolume: false
+      endpoint: ""
+      httpEndpoint: enabled
+      httpTokens: optional
+      iamInstanceProfile: rke-instance
+      insecureTransport: false
+      instanceType: m5.xlarge
+      keypairName: ""
+      kmsKey: ""
+      monitoring: false
+      privateAddressOnly: false
+      region: us-east-1
+      requestSpotInstance: false
+      retries: 5
+      rootSize: 100
+      securityGroup: ""
+      securityGroupRef: example-security-group
+      securityGroupReadonly: false
+      sessionToken: ""
+      spotPrice: "0.50"
+      sshKeyContents: ""
+      sshUser: ubuntu
+      subnetIdRef: example-subnet
+      tags: ""
+      useEbsOptimizedInstance: false
+      usePrivateAddress: false
+      userdata: ""
+      volumeType: gp2
+      vpcIdRef: example-vpc
+      zone: a
+  providerConfigRef:
+    name: example

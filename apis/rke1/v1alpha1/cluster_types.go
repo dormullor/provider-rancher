@@ -44,6 +44,7 @@ type RKENodePool struct {
 	Labels                  map[string]string `json:"labels,omitempty"`
 	Name                    string            `json:"name,omitempty"`
 	NodeTemplateID          string            `json:"nodeTemplateId,omitempty"`
+	NodeTemplateIDRef       string            `json:"nodeTemplateIdRef,omitempty"`
 	Quantity                int64             `json:"quantity,omitempty"`
 	Worker                  bool              `json:"worker,omitempty"`
 }
@@ -94,7 +95,7 @@ type ClusterStatus struct {
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,rancher}
-type Cluster struct {
+type RKE1Cluster struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
@@ -105,20 +106,20 @@ type Cluster struct {
 // +kubebuilder:object:root=true
 
 // ClusterList contains a list of Cluster
-type ClusterList struct {
+type RKE1ClusterList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Cluster `json:"items"`
+	Items           []RKE1Cluster `json:"items"`
 }
 
 // Cluster type metadata.
 var (
-	ClusterKind             = reflect.TypeOf(Cluster{}).Name()
+	ClusterKind             = reflect.TypeOf(RKE1Cluster{}).Name()
 	ClusterGroupKind        = schema.GroupKind{Group: Group, Kind: ClusterKind}.String()
 	ClusterKindAPIVersion   = ClusterKind + "." + SchemeGroupVersion.String()
 	ClusterGroupVersionKind = SchemeGroupVersion.WithKind(ClusterKind)
 )
 
 func init() {
-	SchemeBuilder.Register(&Cluster{}, &ClusterList{})
+	SchemeBuilder.Register(&RKE1Cluster{}, &RKE1ClusterList{})
 }

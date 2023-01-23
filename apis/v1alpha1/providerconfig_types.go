@@ -30,15 +30,22 @@ type ProviderConfigSpec struct {
 	// Credentials required to authenticate to this provider.
 	Credentials ProviderCredentials `json:"credentials"`
 	RancherHost string              `json:"rancherHost"`
+	AWScreds    AWScreds            `json:"awsCreds,omitempty"`
+}
+
+// AWScreds contains the credentials for AWS
+type AWScreds struct {
+	AccessKeyID     ProviderCredentials `json:"accessKeyID,omitempty"`
+	SecretAccessKey ProviderCredentials `json:"secretAccessKey,omitempty"`
 }
 
 // ProviderCredentials required to authenticate.
 type ProviderCredentials struct {
 	// Source of the provider credentials.
 	// +kubebuilder:validation:Enum=None;Secret;InjectedIdentity;Environment;Filesystem
-	Source xpv1.CredentialsSource `json:"source"`
+	Source xpv1.CredentialsSource `json:"source,omitempty"`
 
-	xpv1.CommonCredentialSelectors `json:",inline"`
+	xpv1.CommonCredentialSelectors `json:",inline,omitempty"`
 }
 
 // A ProviderConfigStatus reflects the observed state of a ProviderConfig.

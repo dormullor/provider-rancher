@@ -20,8 +20,9 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/controller"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/dormullor/provider-rancher/internal/controller/cluster"
 	"github.com/dormullor/provider-rancher/internal/controller/config"
+	"github.com/dormullor/provider-rancher/internal/controller/rke1cluster"
+	"github.com/dormullor/provider-rancher/internal/controller/rke1nodetemplate"
 )
 
 // Setup creates all Rancher controllers with the supplied logger and adds them to
@@ -29,7 +30,8 @@ import (
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		config.Setup,
-		cluster.Setup,
+		rke1cluster.Setup,
+		rke1nodetemplate.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err
