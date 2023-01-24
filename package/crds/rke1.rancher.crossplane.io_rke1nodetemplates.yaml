@@ -106,7 +106,9 @@ spec:
                       rootSize:
                         type: integer
                       securityGroup:
-                        type: string
+                        items:
+                          type: string
+                        type: array
                       securityGroupReadonly:
                         type: boolean
                       securityGroupRef:

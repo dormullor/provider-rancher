@@ -217,7 +217,7 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 		if err != nil {
 			return managed.ExternalCreation{}, err
 		}
-		cr.Spec.ForProvider.Amazonec2Config.SecurityGroup = securityGroupID
+		cr.Spec.ForProvider.Amazonec2Config.SecurityGroup = append(cr.Spec.ForProvider.Amazonec2Config.SecurityGroup, securityGroupID)
 	}
 
 	_, err := util.CreateNodeTemplate(c.rancherHost, c.token, c.httpClient, *cr, ctx)
