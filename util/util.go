@@ -368,37 +368,6 @@ func GetSubnetIdByTags(tags map[string]string, region string, credentials *crede
 	return *result.Subnets[0].SubnetId, nil
 }
 
-func GetSecurityGroupIdByTags(tags map[string]string, region string, credentials *credentials.Credentials) (string, error) {
-	sess, err := session.NewSession(&aws.Config{
-		Region:      aws.String(region),
-		Credentials: credentials},
-	)
-	if err != nil {
-		return "", err
-	}
-	svc := ec2.New(sess)
-	input := &ec2.DescribeSecurityGroupsInput{
-		Filters: []*ec2.Filter{
-			{
-				Name:   aws.String("tag:Name"),
-				Values: []*string{aws.String(tags["Name"])},
-			},
-			{
-				Name:   aws.String("tag:ManagedBy"),
-				Values: []*string{aws.String(tags["ManagedBy"])},
-			},
-		},
-	}
-	result, err := svc.DescribeSecurityGroups(input)
-	if err != nil {
-		return "", err
-	}
-	if len(result.SecurityGroups) == 0 {
-		return "", fmt.Errorf("security group not found")
-	}
-	return *result.SecurityGroups[0].GroupId, nil
-}
-
 func GetNodeTemplateByName(host, token, name string, httpClient http.Client, ctx context.Context) (string, error) {
 	url := fmt.Sprintf("%s/v3/nodetemplates?name=%s", host, name)
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)

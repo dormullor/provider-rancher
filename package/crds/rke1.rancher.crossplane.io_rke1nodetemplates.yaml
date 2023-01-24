@@ -111,8 +111,6 @@ spec:
                         type: array
                       securityGroupReadonly:
                         type: boolean
-                      securityGroupRef:
-                        type: string
                       sessionToken:
                         type: string
                       spotPrice:
