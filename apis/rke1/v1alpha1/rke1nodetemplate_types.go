@@ -27,13 +27,14 @@ import (
 
 // RKE1NodeTemplateParameters are the configurable fields of a RKE1NodeTemplate.
 type RKE1NodeTemplateParameters struct {
-	Name                 string          `json:"name,omitempty"`
-	CloudCredentialId    string          `json:"cloudCredentialId,omitempty"`
-	DisplayName          string          `json:"displayName,omitempty"`
-	Driver               string          `json:"driver,omitempty"`
-	EngineInstallURL     string          `json:"engineInstallURL,omitempty"`
-	UseInternalIPAddress bool            `json:"useInternalIPAddress,omitempty"`
-	Amazonec2Config      Amazonec2Config `json:"amazonec2Config,omitempty"`
+	Name                 string            `json:"name,omitempty"`
+	CloudCredentialId    string            `json:"cloudCredentialId,omitempty"`
+	DisplayName          string            `json:"displayName,omitempty"`
+	Driver               string            `json:"driver,omitempty"`
+	EngineInstallURL     string            `json:"engineInstallURL,omitempty"`
+	UseInternalIPAddress bool              `json:"useInternalIPAddress,omitempty"`
+	Amazonec2Config      Amazonec2Config   `json:"amazonec2Config,omitempty"`
+	Labels               map[string]string `json:"labels,omitempty"`
 }
 
 // Amazonec2Config contains the parameters for the amazonec2 driver.

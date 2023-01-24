@@ -148,6 +148,10 @@ spec:
                     type: string
                   engineInstallURL:
                     type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
                   name:
                     type: string
                   useInternalIPAddress:
